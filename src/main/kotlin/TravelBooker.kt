@@ -3,6 +3,7 @@ import es.iesra.presentacion.ConsolaUI
 import es.iesra.presentacion.IUserInterface
 import es.iesra.servicio.IReservaService
 import es.iesra.servicio.ReservaService
+import java.time.LocalDateTime
 
 /**
  * Función principal que inicia la aplicación.
