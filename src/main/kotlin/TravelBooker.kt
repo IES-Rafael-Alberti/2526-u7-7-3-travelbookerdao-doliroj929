@@ -1,24 +1,43 @@
+import es.iesra.dao.ReservaDaoFichero
 import es.iesra.datos.ReservaRepository
-import es.iesra.presentacion.ConsolaUI
-import es.iesra.presentacion.IUserInterface
-import es.iesra.servicio.IReservaService
+import es.iesra.dominio.*
 import es.iesra.servicio.ReservaService
+import es.iesra.presentacion.ConsolaUI
 
-/**
- * Función principal que inicia la aplicación.
- * Se realiza la inyección de dependencias de manera manual.
- */
 fun main() {
-    // Crear la instancia del repositorio (capa de datos).
-    val repositorio = ReservaRepository()
+    // Rutas a tus archivos CSV dentro de src
+    val rutaVuelos = "src/main/kotlin/es/iesra/datos/reserva_vuelo.csv"
+    val rutaHoteles = "src/main/kotlin/es/iesra/datos/reserva_hotel.csv"
 
-    // Inyectar la dependencia en el servicio a través de la interfaz.
-    val reservaService: IReservaService = ReservaService(repositorio)
+    // Configuración del DAO de Vuelos
+    val daoVuelo = ReservaDaoFichero<ReservaVuelo>(
+        rutaArchivo = rutaVuelos,
+        cabecera = "id,tipo,descripcion,origen,destino,hora",
+        obtenerId = { it.id },
+        deObjetoATexto = { "${it.id},1,${it.descripcion},${it.origen},${it.destino},${it.horaVuelo}" },
+        deTextoAObjeto = { linea ->
+            val p = linea.split(",")
+            if (p.size >= 6 && p[1] == "1") ReservaVuelo.creaInstancia(p[2], p[3], p[4], p[5]) else null
+        }
+    )
 
-    // Inyectar el servicio en la capa de presentación a través de su interfaz.
-    val ui: IUserInterface = ConsolaUI(reservaService)
+    // Configuración del DAO de Hoteles
+    val daoHotel = ReservaDaoFichero<ReservaHotel>(
+        rutaArchivo = rutaHoteles,
+        cabecera = "id,tipo,descripcion,ubicacion,noches",
+        obtenerId = { it.id },
+        deObjetoATexto = { "${it.id},2,${it.descripcion},${it.ubicacion},${it.numeroNoches}" },
+        deTextoAObjeto = { linea ->
+            val p = linea.split(",")
+            if (p.size >= 5 && p[1] == "2") ReservaHotel.creaInstancia(p[2], p[3], p[4].toInt()) else null
+        }
+    )
 
-    // Iniciar la aplicación.
+    // Inyección de dependencias final
+    val repositorio = ReservaRepository(daoVuelo, daoHotel)
+    val servicio = ReservaService(repositorio)
+    val ui = ConsolaUI(servicio)
+
     ui.iniciar()
 }
 /*

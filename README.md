@@ -1,3 +1,68 @@
+#### **ID actividad:** 7.3
+
+#### **Realizado por:** Daniel Felipe Oliveros Rojas
+
+#  ---------> Preguntas y respuesta <------------
+
+### 1. Librerías y Clases utilizadas
+
+Para la gestión de la persistencia, se ha optado por la librería estándar de **Kotlin IO** sobre la base de **Java IO**, buscando un código más conciso y seguro.
+
+-   **`java.io.File`**: Clase fundamental para referenciar y manipular la ruta del archivo físico.
+
+-   **`ReservaDaoFichero<T>`**: He implementado esta clase genérica aplicando el **patrón DAO (Data Access Object)**. El objetivo es abstraer la complejidad del manejo de archivos, de modo que el resto de la lógica de negocio no sepa cómo se guardan los datos.
+
+https://github.com/IES-Rafael-Alberti/2526-u7-7-3-travelbookerdao-doliroj929/blob/34763e07dd66a83b01511cf7e71da9f3f0200c76/src/main/kotlin/es/iesra/dao/ReservaDaoFichero.kt#L2-L4
+
+**Funciones destacadas de Kotlin:**
+
+-   **`appendText(texto)`**: Permite añadir contenido al final del fichero de forma atómica (abre, escribe y cierra el flujo), lo cual simplifica mucho la escritura en modo _append_.
+
+-   **`readLines()`**: Facilita la lectura completa del archivo devolviendo una lista de cadenas, ideal para su posterior procesamiento.
+
+-   **`writeText(texto)`**: Utilizada específicamente en operaciones de sobrescritura total tras una modificación en memoria.
+
+
+----------
+
+### 2. Formato, Estrategia y Gestión de Errores
+
+-   **2.a Formato de información:** Se ha seleccionado el formato **CSV (Comma-Separated Values)**. Es un estándar ligero y eficiente para este tipo de aplicaciones, permitiendo la interoperabilidad y un parseo sencillo mediante el método `.split(",")`.
+
+-   **2.b Estrategia de ficheros:** Los archivos se localizan en rutas relativas dentro de la estructura del proyecto. Se ha implementado un sistema de **Inyección de Dependencias**, donde el punto de entrada de la aplicación configura los DAOs y los servicios, garantizando un código desacoplado y más fácil de testear.
+
+-   **2.c Gestión de errores:** Se han empleado bloques `try-catch` para capturar excepciones de entrada/salida (`IOException`). Para aumentar la robustez, se utiliza **`mapNotNull`** durante el mapeo de datos; esto permite descartar líneas corruptas o mal formateadas sin interrumpir la ejecución del programa.
+
+
+**Fragmento clave:** `archivo.readLines().drop(1).mapNotNull { transformador(it) }` _Este flujo descarta la cabecera del CSV y filtra automáticamente cualquier error de conversión de texto a objeto._
+
+----------
+
+### 3. Operaciones de Acceso (Lectura, Escritura y Actualización)
+
+-   **1.a Lectura (Read):** Se realiza mediante **acceso secuencial**. Se recupera el contenido completo del fichero para transformarlo en una lista de objetos de dominio, facilitando su manipulación en tiempo de ejecución.
+
+-   **2.b Escritura (Create):** Se utiliza el modo **Añadir (Append)**. La nueva información se concatena al final del archivo existente, preservando los datos previos sin necesidad de procesarlos.
+
+    https://github.com/IES-Rafael-Alberti/2526-u7-7-3-travelbookerdao-doliroj929/blob/34763e07dd66a83b01511cf7e71da9f3f0200c76/src/main/kotlin/es/iesra/dao/ReservaDaoFichero.kt#L43-L48
+
+-   **3.c Actualización/Borrado (Update/Delete):** Se aplica la estrategia de **Lectura-Modificación-Escritura**:
+
+    https://github.com/IES-Rafael-Alberti/2526-u7-7-3-travelbookerdao-doliroj929/blob/34763e07dd66a83b01511cf7e71da9f3f0200c76/src/main/kotlin/es/iesra/dao/ReservaDaoFichero.kt#L34-L41
+    
+    - 1 Se vuelcan todos los registros del fichero a una colección en memoria.
+
+    - 2 Se realiza la edición o el filtrado (eliminación) sobre dicha colección.
+
+    - 3 Se utiliza `writeText` para sustituir el contenido antiguo del fichero por la nueva versión actualizada.
+
+
+
+
+
+
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/AVL4zvU8)
+
 # Actividad: Desarrollo de Proyecto Software en Kotlin
 
 **ID actividad:** 2425_PRO_u4u5u6_taskManager

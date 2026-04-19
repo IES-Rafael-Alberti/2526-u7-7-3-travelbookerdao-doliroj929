@@ -1,22 +1,23 @@
 package es.iesra.datos
 
-import es.iesra.dominio.Reserva
+import es.iesra.dao.IDao
+import es.iesra.dominio.*
 
-/**
- * Implementación en memoria del repositorio de reservas.
- */
-class ReservaRepository : IReservaRepository {
-    private val reservas = mutableListOf<Reserva>()
+class ReservaRepository(
+    private val daoVuelo: IDao<ReservaVuelo, Int>,
+    private val daoHotel: IDao<ReservaHotel, Int>
+) : IReservaRepository {
 
     override fun agregar(reserva: Reserva): Boolean {
-        var agregado = false
-        // Si no existe, se agrega la reserva a la lista.
-        if (!reservas.contains(reserva)) {
-            reservas.add(reserva)
-            agregado = true
+        return when (reserva) {
+            is ReservaVuelo -> daoVuelo.crear(reserva)
+            is ReservaHotel -> daoHotel.crear(reserva)
+            else -> false
         }
-        return agregado
     }
 
-    override fun obtenerTodas(): List<Reserva> = reservas.toList()
+    override fun obtenerTodas(): List<Reserva> {
+        // Combina los datos de ambos ficheros CSV
+        return daoVuelo.obtenerTodos() + daoHotel.obtenerTodos()
+    }
 }
