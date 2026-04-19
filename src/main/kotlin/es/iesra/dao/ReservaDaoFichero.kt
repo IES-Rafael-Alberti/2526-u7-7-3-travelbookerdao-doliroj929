@@ -16,7 +16,7 @@ class ReservaDaoFichero<T>(
     override fun crear(entidad: T): Boolean = try {
         archivo.appendText(deObjetoATexto(entidad) + "\n")
         true
-    } catch (e: IOException) { false }
+    } catch (e: IOException) { false}
 
     override fun obtenerTodos(): List<T> = try {
         if (!archivo.exists()) emptyList()

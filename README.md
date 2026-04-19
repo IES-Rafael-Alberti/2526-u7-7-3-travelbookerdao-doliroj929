@@ -12,6 +12,7 @@ Para la gestión de la persistencia, se ha optado por la librería estándar de 
 
 -   **`ReservaDaoFichero<T>`**: He implementado esta clase genérica aplicando el **patrón DAO (Data Access Object)**. El objetivo es abstraer la complejidad del manejo de archivos, de modo que el resto de la lógica de negocio no sepa cómo se guardan los datos.
 
+https://github.com/IES-Rafael-Alberti/2526-u7-7-3-travelbookerdao-doliroj929/blob/34763e07dd66a83b01511cf7e71da9f3f0200c76/src/main/kotlin/es/iesra/dao/ReservaDaoFichero.kt#L2-L4
 
 **Funciones destacadas de Kotlin:**
 
@@ -20,6 +21,7 @@ Para la gestión de la persistencia, se ha optado por la librería estándar de 
 -   **`readLines()`**: Facilita la lectura completa del archivo devolviendo una lista de cadenas, ideal para su posterior procesamiento.
 
 -   **`writeText(texto)`**: Utilizada específicamente en operaciones de sobrescritura total tras una modificación en memoria.
+
 
 ----------
 
@@ -38,12 +40,16 @@ Para la gestión de la persistencia, se ha optado por la librería estándar de 
 
 ### 3. Operaciones de Acceso (Lectura, Escritura y Actualización)
 
--   **3.a Lectura (Read):** Se realiza mediante **acceso secuencial**. Se recupera el contenido completo del fichero para transformarlo en una lista de objetos de dominio, facilitando su manipulación en tiempo de ejecución.
+-   **1.a Lectura (Read):** Se realiza mediante **acceso secuencial**. Se recupera el contenido completo del fichero para transformarlo en una lista de objetos de dominio, facilitando su manipulación en tiempo de ejecución.
 
--   **3.b Escritura (Create):** Se utiliza el modo **Añadir (Append)**. La nueva información se concatena al final del archivo existente, preservando los datos previos sin necesidad de procesarlos.
+-   **2.b Escritura (Create):** Se utiliza el modo **Añadir (Append)**. La nueva información se concatena al final del archivo existente, preservando los datos previos sin necesidad de procesarlos.
+
+    https://github.com/IES-Rafael-Alberti/2526-u7-7-3-travelbookerdao-doliroj929/blob/34763e07dd66a83b01511cf7e71da9f3f0200c76/src/main/kotlin/es/iesra/dao/ReservaDaoFichero.kt#L43-L48
 
 -   **3.c Actualización/Borrado (Update/Delete):** Se aplica la estrategia de **Lectura-Modificación-Escritura**:
 
+    https://github.com/IES-Rafael-Alberti/2526-u7-7-3-travelbookerdao-doliroj929/blob/34763e07dd66a83b01511cf7e71da9f3f0200c76/src/main/kotlin/es/iesra/dao/ReservaDaoFichero.kt#L34-L41
+    
     - 1 Se vuelcan todos los registros del fichero a una colección en memoria.
 
     - 2 Se realiza la edición o el filtrado (eliminación) sobre dicha colección.
